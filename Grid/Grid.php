@@ -267,7 +267,7 @@ class Grid
      * @var string
      */
     protected $defaultTweak;
-    
+
     /**
      * Filters in session
      * @var array
@@ -481,6 +481,7 @@ class Grid
                     $this->page = 0;
                     $this->limit = 0;
                 }
+
                 $this->prepare();
 
                 if (is_callable($action->getCallback())) {
@@ -1915,9 +1916,10 @@ class Grid
     /**
      * Default delete action
      *
-     * @param $ids
+     * @param array $ids
+     * @param boolean $actionAllKeys
      */
-    public function deleteAction($ids, $actionAllKeys)
+    public function deleteAction(array $ids, $actionAllKeys)
     {
         $this->source->delete($ids, $actionAllKeys);
     }
@@ -2008,7 +2010,7 @@ class Grid
 
         return $result;
     }
-    
+
     /**
      * Returns an array of the active filters of the grid stored in session
      *
@@ -2020,11 +2022,11 @@ class Grid
         if ($this->hash === null) {
             throw new \Exception('getFilters method is only available in the manipulate callback function or after the call of the method isRedirected of the grid.');
         }
-    
+
         if ($this->sessionFilters === null) {
             $this->sessionFilters = array();
             $session = $this->sessionData;
-    
+
             $requestQueries = array(
                 self::REQUEST_QUERY_MASS_ACTION_ALL_KEYS_SELECTED,
                 self::REQUEST_QUERY_MASS_ACTION,
@@ -2035,11 +2037,11 @@ class Grid
                 self::REQUEST_QUERY_TEMPLATE,
                 self::REQUEST_QUERY_RESET
             );
-    
+
             foreach ($requestQueries as $request_query) {
                 unset($session[$request_query]);
             }
-    
+
             foreach ($session as $columnId => $sessionFilter) {
                 if (isset($sessionFilter['operator'])) {
                     $operator = $sessionFilter['operator'];
@@ -2047,18 +2049,18 @@ class Grid
                 } else {
                     $operator = $this->getColumn($columnId)->getDefaultOperator();
                 }
-    
+
                 if (! isset($sessionFilter['to'])) {
                     $sessionFilter = $sessionFilter['from'];
                 }
-    
+
                 $this->sessionFilters[$columnId] = new Filter($operator, $sessionFilter);
             }
         }
-    
+
         return $this->sessionFilters;
     }
-    
+
     /**
      * Returns the filter of a column stored in session
      *
@@ -2072,12 +2074,12 @@ class Grid
         if ($this->hash === null) {
             throw new \Exception('getFilters method is only available in the manipulate callback function or after the call of the method isRedirected of the grid.');
         }
-    
+
         $sessionFilters = $this->getFilters();
-    
+
         return isset($sessionFilters[$columnId]) ? $sessionFilters[$columnId] : null;
     }
-    
+
     /**
      * A filter of the column is stored in session ?
      *
@@ -2091,7 +2093,7 @@ class Grid
         if ($this->hash === null) {
             throw new \Exception('hasFilters method is only available in the manipulate callback function or after the call of the method isRedirected of the grid.');
         }
-    
+
         return getFilter($columnId) !== null;
     }
 }
